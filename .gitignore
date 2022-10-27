@@ -1,0 +1,4 @@
+node_modules/
+radata
+package.json
+package-lock.json

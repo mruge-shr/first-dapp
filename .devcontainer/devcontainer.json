@@ -1,0 +1,10 @@
+{
+	"name": "Python",
+	"dockerFile": "Dockerfile",
+	"context": ".",
+	"settings": {},
+	"extensions": [
+		"waderyan.nodejs-extension-pack"
+	],
+	"remoteUser": "node"
+}

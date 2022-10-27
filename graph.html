@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+
+        <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    </head>
+<body>
+    <div id="container"></div>
+    <script>
+      var nodeIds, shadowState, nodesArray, nodes, edgesArray, edges, network;
+      function startNetwork() {
+        nodeIds = [];
+        shadowState = false;
+        nodesArray = [];
+        nodes = new vis.DataSet(nodesArray);
+        edgesArray = [];
+        edges = new vis.DataSet(edgesArray);
+        var container = document.getElementById("container");
+        var data = { nodes: nodes, edges: edges, };
+        var options = {};
+        network = new vis.Network(container, data, options);
+    }
+    function contains(edge, edges){
+      for (i=0; i<edges.length; i++){
+        if (edge.to == edges[i].to && edge.from == edges[i].from ){
+          return true;
+        }
+      }
+      return false;
+    }
+    </script>
+    <script>
+        var gun = Gun('http://localhost:3000/gun');
+        startNetwork()
+        gun.get('mynodes').on(function(mynodes){
+          for (var node in mynodes){
+            nobj = gun.get(node).on(
+              function(data){
+                try {
+                  n = data.name
+                  nodes.add({ id: n, label: n });
+                  nodeIds.push(n);
+                }
+                catch(error){ }
+                try {
+                  s = data.marriedTo['#']
+                  e = {from: n, to: s}
+                  if (!contains(e, edgesArray)){
+                    edgesArray.push(e)
+                    edges.add({from: n, to: s})
+                  }
+                  
+                }
+                catch (error) { }
+              }
+            );
+            
+          }
+          
+        },{wait: 0})
+      </script>
+
+
+</body>
+    
+</html>
